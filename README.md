@@ -51,9 +51,16 @@ log stream --predicate 'eventMessage CONTAINS "stats-fan-keeper"'
 
 ## Notes
 
-- Your speed can drop for up to 5 seconds before it is restored.
-- Setting very low speeds under heavy load is your responsibility. macOS will not step in
-  while this is running and Stats is on manual.
+- Your speed can drop for up to about 10 seconds before it is restored (launchd runs
+  interval jobs at most every 10 seconds).
+- Speeds below the fan's minimum, including Stats' "off" mode, are never re-applied: if
+  macOS takes those back, it keeps them.
+- `smc` is only run as root after `codesign` confirms it is still signed by Stats'
+  developer, since `/Applications/Stats.app` is usually writable without admin rights.
+- Settings are read live from the logged-in user's preferences, so switching a fan back
+  to Auto in Stats takes effect immediately.
+- Quitting Stats stops the watchdog from doing anything, but it does not return the fans
+  to Auto. Set them to Auto in Stats first.
 - If you edit the script, re-run `./install.sh` to copy it into place.
 
 ## License
